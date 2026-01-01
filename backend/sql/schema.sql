@@ -2,6 +2,10 @@
 CREATE DATABASE IF NOT EXISTS project_tracker;
 USE project_tracker;
 
+DROP TABLE IF EXISTS activity_logs;
+DROP TABLE IF EXISTS projects;
+DROP TABLE IF EXISTS users;
+
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
   id INT PRIMARY KEY AUTO_INCREMENT,
@@ -30,16 +34,8 @@ CREATE TABLE IF NOT EXISTS activity_logs (
   user_id INT,
   project_id INT,
   action VARCHAR(50) NOT NULL,
-  details TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
-  FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+  --FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE SET NULL
 );
 
--- Insert sample admin user (password: admin123)
-INSERT INTO users (username, email, password, role) VALUES 
-('admin', 'admin@gigasec.com', '$2a$10$8Z9QX5J5rVq5R5Q5R5Q5QuK5R5Q5R5Q5R5Q5R5Q5R5Q5R5Q5R5Q5u', 'admin');
-
--- Insert sample regular user (password: user123)
-INSERT INTO users (username, email, password, role) VALUES 
-('john_doe', 'john@gigasec.com', '$2a$10$8Z9QX5J5rVq5R5Q5R5Q5QuK5R5Q5R5Q5R5Q5R5Q5R5Q5R5Q5R5Q5u', 'user');

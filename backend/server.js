@@ -3,6 +3,12 @@ const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
+const { sequelize } = require("./models");
+sequelize
+  .authenticate()
+  .then(() => console.log("DB connected"))
+  .catch((err) => console.error("DB connection failed:", err.message));
+
 app.use(cors());
 app.use(express.json());
 
