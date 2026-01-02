@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const { User } = require("../models");
+const { logActivity } = require("../utils/activity");
 
 const router = express.Router();
 
@@ -36,6 +37,8 @@ router.post("/register", async (req, res) => {
 
     // Default role: user (matches schema default)
     const user = await User.create({ username, email, password: hashed });
+
+    await logActivity({ user_id: user.id, action: "USER_REGISTER" });
 
     return res.status(201).json({
       message: "Registered successfully",
@@ -77,6 +80,8 @@ router.post("/login", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "2h" }
     );
+
+    await logActivity({ user_id: user.id, action: "USER_LOGIN" });
 
     return res.json({
       token,
