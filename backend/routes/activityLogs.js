@@ -10,12 +10,9 @@ const router = express.Router();
  * admin: sees all logs
  * user: sees only their own logs
  */
-router.get("/", auth, async (req, res) => {
+router.get("/", auth, requireAdmin, async (req, res) => {
   try {
-    const where = req.user.role === "admin" ? {} : { user_id: req.user.id };
-
     const logs = await ActivityLog.findAll({
-      where,
       order: [["created_at", "DESC"]],
       limit: 200,
       include: [
