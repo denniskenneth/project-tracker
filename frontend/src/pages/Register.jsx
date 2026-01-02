@@ -5,7 +5,7 @@ import s from "../styles/auth.module.css";
 
 export default function Register() {
   const nav = useNavigate();
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -42,13 +42,13 @@ export default function Register() {
 
         <form onSubmit={onSubmit} className={s.form}>
           <label className={s.field}>
-            <span className={s.label}>Name</span>
+            <span className={s.label}>UserName</span>
             <input
               className={s.input}
-              name="name"
-              value={form.name}
+              name="username"
+              value={form.username}
               onChange={onChange}
-              placeholder="e.g. John Doe"
+              placeholder="e.g. jon123"
               autoComplete="name"
             />
           </label>

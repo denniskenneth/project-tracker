@@ -2,6 +2,7 @@ const express = require("express");
 const { Op } = require("sequelize");
 const auth = require("../middleware/auth");
 const { Project, ActivityLog } = require("../models");
+const { logActivity } = require("../utils/activity");
 
 const router = express.Router();
 
@@ -16,16 +17,6 @@ function validateProjectInput({ title, summary, status }) {
   if (status !== undefined && !VALID_STATUSES.has(status))
     return "status must be Pending, Ongoing, or Completed";
   return null;
-}
-
-async function logActivity({ user_id, project_id, action }) {
-  // Bonus feature, but safe: if table doesn't exist or fails, don't break core flow
-  try {
-    if (!ActivityLog) return;
-    await ActivityLog.create({ user_id, project_id, action });
-  } catch (e) {
-    console.warn("ACTIVITY_LOG_FAIL:", e?.message || e);
-  }
 }
 
 async function getProjectOr404(id) {
@@ -78,7 +69,7 @@ router.post("/", auth, async (req, res) => {
     await logActivity({
       user_id: req.user.id,
       project_id: project.id,
-      action: "CREATE",
+      action: "PROJECT_CREATE",
     });
 
     return res.status(201).json(project);
@@ -145,7 +136,7 @@ router.put("/:id", auth, async (req, res) => {
     await logActivity({
       user_id: req.user.id,
       project_id: project.id,
-      action: "UPDATE",
+      action: "PROJECT_UPDATE",
     });
 
     return res.json(project);
@@ -174,7 +165,7 @@ router.delete("/:id", auth, async (req, res) => {
     await logActivity({
       user_id: req.user.id,
       project_id: project.id,
-      action: "DELETE",
+      action: "PROJECT_DELETE",
     });
     await project.destroy();
 
