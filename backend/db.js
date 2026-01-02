@@ -1,5 +1,5 @@
 const { Sequelize } = require("sequelize");
-require("dotenv").config();
+require("dotenv").config({ quiet: true });
 
 const dbName =
   process.env.NODE_ENV === "test"
