@@ -122,6 +122,15 @@ export default function Projects() {
             >
               {loadingList ? "Refreshing..." : "Refresh"}
             </button>
+            {user?.role === "admin" && (
+              <button
+                className={s.btnSecondary}
+                onClick={() => nav("/activity-logs")}
+              >
+                Activity Logs
+              </button>
+            )}
+
             <button className={s.btnPrimary} onClick={logout}>
               Logout
             </button>

@@ -1,0 +1,59 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: project-tracker-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+      MYSQL_DATABASE: ${DB_NAME}
+    # ports:
+    #   - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./backend/sql/schema.sql:/docker-entrypoint-initdb.d/001_schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_PASS}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: project-tracker-backend
+    restart: unless-stopped
+    environment:
+      PORT: 5000
+      DB_HOST: db
+      DB_USER: root
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      # optional: quiet dotenv logs if you still load dotenv in code
+      DOTENV_CONFIG_QUIET: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "5000:5000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # If you decide to use a Vite env var later, you can wire it here.
+        VITE_API_BASE_URL: http://localhost:5000
+    container_name: project-tracker-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "5173:80" # served by nginx
+
+volumes:
+  db_data:
