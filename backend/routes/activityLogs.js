@@ -29,7 +29,7 @@ router.get("/", auth, requireAdmin, async (req, res) => {
 });
 
 /**
- * DELETE /api/activity-logs  (optional cleanup endpoint)
+ * DELETE /api/activity-logs
  * admin only
  */
 router.delete("/", auth, requireAdmin, async (req, res) => {
