@@ -10,7 +10,6 @@ services:
     #   - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
-      # auto-run schema on first boot
       - ./backend/sql/schema.sql:/docker-entrypoint-initdb.d/001_schema.sql:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_PASS}"]
